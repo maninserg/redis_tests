@@ -2,7 +2,7 @@ from factory.faker import faker
 import sqlite3
 
 
-NUMBERS = 1000
+NUMBERS = 100
 
 
 def create_one_person():
@@ -49,8 +49,28 @@ def create_table():
         cursor.execute(sqlite_create_table_query)
         sqlite_connection.commit()
         cursor.close()
+        print('Table was created')
     except sqlite3.Error as error:
         print('Error of create table', error)
+    finally:
+        if sqlite_connection:
+            sqlite_connection.close()
+            print('Connection was closed')
+
+
+def insert_persons_into_database():
+    try:
+        sqlite_connection = sqlite3.connect('db_persons.db')
+        cursor = sqlite_connection.cursor()
+        sqlite_insert_persons = '''INSERT INTO persons(first_name, last_name,
+        address, phone_number, email) VALUES(?, ?, ?, ?, ?)'''
+        for item in generator_persons(NUMBERS):
+            cursor.execute(sqlite_insert_persons, item)
+            sqlite_connection.commit()
+        cursor.close()
+        print('Persons was inserted to table')
+    except sqlite3.Error as error:
+        print('Error of insert to table', error)
     finally:
         if sqlite_connection:
             sqlite_connection.close()
@@ -60,6 +80,7 @@ def create_table():
 def main():
         create_database()
         create_table()
+        insert_persons_into_database()
 
 
 if __name__ == '__main__':
