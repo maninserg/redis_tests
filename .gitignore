@@ -130,3 +130,5 @@ dmypy.json
 
 # Venv
 .venv
+
+.DS_Store
